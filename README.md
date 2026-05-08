@@ -2,6 +2,8 @@
 
 A web platform connecting households with trusted local helpers for home services.
 
+For connecting a cloned copy to the same shared online database, see [CONNECT_SHARED_DATABASE.md](./CONNECT_SHARED_DATABASE.md).
+
 ## Features
 
 - **User Registration & Login** - JWT-based auth with role-based access (Household, Helper, Admin)
