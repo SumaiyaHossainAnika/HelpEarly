@@ -1,0 +1,132 @@
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export default function Navbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setMenuOpen(false);
+  };
+
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/' ? 'active' : '';
+    }
+
+    return location.pathname === path || location.pathname.startsWith(`${path}/`) ? 'active' : '';
+  };
+
+  return (
+    <nav className="navbar" id="main-navbar">
+      <div className="container navbar-inner">
+        <Link to="/" className="navbar-brand" onClick={() => setMenuOpen(false)}>
+          <i className="fas fa-home"></i> <span className="brand-text">At Your Service</span>
+        </Link>
+
+        <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
+          {/* Common link */}
+          <Link to="/" className={`nav-link ${isActive('/')}`} onClick={() => setMenuOpen(false)}>
+            Home
+          </Link>
+
+          {/* Household: Browse Helpers is their main page */}
+          {(!user || user.role === 'household') && (
+            <Link to="/helpers" className={`nav-link ${isActive('/helpers')}`} onClick={() => setMenuOpen(false)}>
+              Browse Helpers
+            </Link>
+          )}
+
+          {/* Helper: Dashboard + Browse Jobs */}
+          {user && user.role === 'helper' && (
+            <>
+              <Link to="/helper/dashboard" className={`nav-link ${isActive('/helper/dashboard')}`} onClick={() => setMenuOpen(false)}>
+                Dashboard
+              </Link>
+              <Link to="/jobs" className={`nav-link ${isActive('/jobs')}`} onClick={() => setMenuOpen(false)}>
+                Browse Jobs
+              </Link>
+            </>
+          )}
+
+          {/* Household: Dashboard + Job Board + Chat */}
+          {user && user.role === 'household' && (
+            <>
+              <Link to="/dashboard" className={`nav-link ${isActive('/dashboard')}`} onClick={() => setMenuOpen(false)}>
+                Dashboard
+              </Link>
+              <Link to="/jobs" className={`nav-link ${isActive('/jobs')}`} onClick={() => setMenuOpen(false)}>
+                Job Board
+              </Link>
+              <Link to="/chat" className={`nav-link ${isActive('/chat')}`} onClick={() => setMenuOpen(false)}>
+                Chat
+              </Link>
+            </>
+          )}
+
+          {/* Helper: Chat */}
+          {user && user.role === 'helper' && (
+            <Link to="/chat" className={`nav-link ${isActive('/chat')}`} onClick={() => setMenuOpen(false)}>
+              Chat
+            </Link>
+          )}
+
+          {/* Admin */}
+          {user && user.role === 'admin' && (
+            <Link to="/admin" className={`nav-link ${isActive('/admin')}`} onClick={() => setMenuOpen(false)}>
+              Admin Panel
+            </Link>
+          )}
+
+          {/* Profile - for logged in users */}
+          {user && (
+            <Link to="/profile" className={`nav-link ${isActive('/profile')}`} onClick={() => setMenuOpen(false)}>
+              Profile
+            </Link>
+          )}
+        </div>
+
+        <div className="navbar-actions">
+          <button
+            className="btn btn-ghost btn-sm theme-toggle"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle dark mode"
+            type="button"
+          >
+            <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+            {theme === 'dark' ? 'Light' : 'Dark'}
+          </button>
+
+          {user ? (
+            <div className="navbar-user">
+              <span className="navbar-user-name">{user.name?.split(' ')[0]}</span>
+              <button className="btn btn-sm btn-secondary" onClick={handleLogout} id="logout-btn">
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <Link to="/login" className="btn btn-ghost">Login</Link>
+              <Link to="/register" className="btn btn-primary btn-sm">Sign Up</Link>
+            </div>
+          )}
+
+          <button className="mobile-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
+            <span className={`hamburger ${menuOpen ? 'open' : ''}`}></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+}

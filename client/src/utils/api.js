@@ -1,0 +1,133 @@
+const API_BASE = '/api';
+
+async function request(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  // Handle FormData (file uploads)
+  if (options.body instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+
+  const res = await fetch(`${API_BASE}${endpoint}`, config);
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || 'Something went wrong');
+  }
+
+  return data;
+}
+
+// Auth
+export const authAPI = {
+  register: (data) => request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
+  login: (data) => request('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
+  getMe: () => request('/auth/me'),
+  changePassword: (data) => request('/auth/change-password', { method: 'PUT', body: JSON.stringify(data) }),
+  updateProfile: (data) => {
+    if (data instanceof FormData) {
+      return request('/auth/profile', { method: 'PUT', body: data });
+    }
+    return request('/auth/profile', { method: 'PUT', body: JSON.stringify(data) });
+  },
+};
+
+// Helpers
+export const helpersAPI = {
+  getAll: (params) => {
+    const query = new URLSearchParams(params).toString();
+    return request(`/helpers?${query}`);
+  },
+  getOne: (id) => request(`/helpers/${id}`),
+  getMyProfile: () => request('/helpers/me'),
+  update: (data) => request('/helpers/me', { method: 'PUT', body: JSON.stringify(data) }),
+  addService: (data) => request('/helpers/services', { method: 'POST', body: JSON.stringify(data) }),
+  deleteService: (id) => request(`/helpers/services/${id}`, { method: 'DELETE' }),
+};
+
+// Categories
+export const categoriesAPI = {
+  getAll: () => request('/categories'),
+  getOne: (id) => request(`/categories/${id}`),
+};
+
+// Bookings
+export const bookingsAPI = {
+  create: (data) => request('/bookings', { method: 'POST', body: JSON.stringify(data) }),
+  getAll: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/bookings?${query}`);
+  },
+  update: (id, data) => request(`/bookings/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  cancel: (id) => request(`/bookings/${id}`, { method: 'DELETE' }),
+};
+
+// Reviews
+export const reviewsAPI = {
+  create: (data) => request('/reviews', { method: 'POST', body: JSON.stringify(data) }),
+  getForHelper: (id, params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/reviews/helper/${id}?${query}`);
+  },
+};
+
+// Messages
+export const messagesAPI = {
+  getConversations: () => request('/messages/conversations'),
+  getMessages: (conversationId) => request(`/messages/${conversationId}`),
+  send: (data) => request('/messages', { method: 'POST', body: JSON.stringify(data) }),
+  getOrCreateConversation: (userId) => request(`/messages/conversation/${userId}`),
+};
+
+// Complaints
+export const complaintsAPI = {
+  getContacts: () => request('/complaints/contacts'),
+  getMine: () => request('/complaints/mine'),
+  create: (data) => request('/complaints', { method: 'POST', body: JSON.stringify(data) }),
+  getAll: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/complaints?${query}`);
+  },
+  update: (id, data) => request(`/complaints/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+};
+
+// Jobs
+export const jobsAPI = {
+  create: (data) => request('/jobs', { method: 'POST', body: JSON.stringify(data) }),
+  getAll: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/jobs?${query}`);
+  },
+  getOne: (id) => request(`/jobs/${id}`),
+  getMyJobs: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/jobs/my?${query}`);
+  },
+  getForHelper: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/jobs/for-helper?${query}`);
+  },
+  apply: (id, data) => request(`/jobs/${id}/apply`, { method: 'POST', body: JSON.stringify(data) }),
+  getMyApplications: () => request('/jobs/applications'),
+  updateApplication: (id, data) => request(`/jobs/applications/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+};
+
+// Admin
+export const adminAPI = {
+  getStats: () => request('/admin/stats'),
+  getUsers: (params) => {
+    const query = params ? new URLSearchParams(params).toString() : '';
+    return request(`/admin/users?${query}`);
+  },
+  updateUser: (id, data) => request(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  verifyHelper: (id) => request(`/admin/helpers/${id}/verify`, { method: 'PUT' }),
+  deleteUser: (id) => request(`/admin/users/${id}`, { method: 'DELETE' }),
+};
