@@ -3,9 +3,23 @@ const pool = require('../config/db');
 // Get platform statistics
 exports.getStats = async (req, res) => {
   try {
-    const [users, helpers, bookings, reviews, jobs] = await Promise.all([
+    const [users, helpers, userBreakdown, bookings, reviews, jobs] = await Promise.all([
       pool.query('SELECT COUNT(*) FROM users WHERE is_active = true'),
       pool.query('SELECT COUNT(*) FROM helpers h JOIN users u ON h.user_id = u.id WHERE u.is_active = true'),
+      pool.query(`SELECT
+                    COUNT(*)::int as total,
+                    COUNT(*) FILTER (WHERE is_active = true)::int as active,
+                    COUNT(*) FILTER (WHERE is_active = false)::int as banned,
+                    COUNT(*) FILTER (WHERE role = 'household')::int as households,
+                    COUNT(*) FILTER (WHERE role = 'helper')::int as helpers,
+                    COUNT(*) FILTER (WHERE role = 'admin')::int as admins,
+                    COUNT(*) FILTER (WHERE role = 'household' AND is_active = true)::int as active_households,
+                    COUNT(*) FILTER (WHERE role = 'helper' AND is_active = true)::int as active_helpers,
+                    COUNT(*) FILTER (WHERE role = 'admin' AND is_active = true)::int as active_admins,
+                    COUNT(*) FILTER (WHERE role = 'household' AND is_active = false)::int as banned_households,
+                    COUNT(*) FILTER (WHERE role = 'helper' AND is_active = false)::int as banned_helpers,
+                    COUNT(*) FILTER (WHERE role = 'admin' AND is_active = false)::int as banned_admins
+                  FROM users`),
       pool.query(`SELECT COUNT(*) as total,
                   COUNT(*) FILTER (WHERE b.status = 'pending') as pending,
                   COUNT(*) FILTER (WHERE b.status = 'completed') as completed
@@ -55,6 +69,7 @@ exports.getStats = async (req, res) => {
         total: parseInt(jobs.rows[0].total),
         open: parseInt(jobs.rows[0].open),
       },
+      userBreakdown: userBreakdown.rows[0],
       revenue: parseFloat(revenue.rows[0].total),
       recentBookings: recentBookings.rows,
     });
@@ -87,10 +102,25 @@ exports.getUsers = async (req, res) => {
 
     const result = await pool.query(query, params);
     const countResult = await pool.query('SELECT COUNT(*) FROM users');
+    const userBreakdown = await pool.query(`SELECT
+      COUNT(*)::int as total,
+      COUNT(*) FILTER (WHERE is_active = true)::int as active,
+      COUNT(*) FILTER (WHERE is_active = false)::int as banned,
+      COUNT(*) FILTER (WHERE role = 'household')::int as households,
+      COUNT(*) FILTER (WHERE role = 'helper')::int as helpers,
+      COUNT(*) FILTER (WHERE role = 'admin')::int as admins,
+      COUNT(*) FILTER (WHERE role = 'household' AND is_active = true)::int as active_households,
+      COUNT(*) FILTER (WHERE role = 'helper' AND is_active = true)::int as active_helpers,
+      COUNT(*) FILTER (WHERE role = 'admin' AND is_active = true)::int as active_admins,
+      COUNT(*) FILTER (WHERE role = 'household' AND is_active = false)::int as banned_households,
+      COUNT(*) FILTER (WHERE role = 'helper' AND is_active = false)::int as banned_helpers,
+      COUNT(*) FILTER (WHERE role = 'admin' AND is_active = false)::int as banned_admins
+      FROM users`);
 
     res.json({
       users: result.rows,
       total: parseInt(countResult.rows[0].count),
+      userBreakdown: userBreakdown.rows[0],
     });
   } catch (error) {
     console.error('GetUsers error:', error);

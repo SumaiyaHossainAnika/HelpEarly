@@ -11,7 +11,34 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    adminAPI.getStats().then(setStats).catch(console.error).finally(() => setLoading(false));
+    let isMounted = true;
+
+    const loadOverviewStats = async () => {
+      try {
+        const [statsData, usersData] = await Promise.all([
+          adminAPI.getStats(),
+          adminAPI.getUsers({ limit: 1 }),
+        ]);
+
+        if (!isMounted) return;
+        setStats({
+          ...statsData,
+          userBreakdown: usersData.userBreakdown || statsData.userBreakdown,
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadOverviewStats();
+    const refreshTimer = setInterval(loadOverviewStats, 5000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(refreshTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -27,6 +54,11 @@ export default function AdminDashboard() {
     try {
       await adminAPI.updateUser(id, { is_active: !isActive });
       setUsers(users.map(u => u.id === id ? { ...u, is_active: !isActive } : u));
+      const [statsData, usersData] = await Promise.all([
+        adminAPI.getStats(),
+        adminAPI.getUsers({ limit: 1 }),
+      ]);
+      setStats({ ...statsData, userBreakdown: usersData.userBreakdown || statsData.userBreakdown });
     } catch (err) { alert(err.message); }
   };
 
@@ -42,6 +74,11 @@ export default function AdminDashboard() {
     try {
       await adminAPI.deleteUser(id);
       setUsers(users.filter(u => u.id !== id));
+      const [statsData, usersData] = await Promise.all([
+        adminAPI.getStats(),
+        adminAPI.getUsers({ limit: 1 }),
+      ]);
+      setStats({ ...statsData, userBreakdown: usersData.userBreakdown || statsData.userBreakdown });
     } catch (err) { alert(err.message); }
   };
 
@@ -73,13 +110,22 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && stats && (
           <div className="animate-fade-in">
             <div className="grid grid-4 stagger-children" style={{ marginBottom: 32 }}>
-              <div className="stat-card"><div className="stat-icon" style={{ background: 'var(--info-bg)' }}><i className="fas fa-users"></i></div><div className="stat-info"><h3>{stats.users}</h3><p>Total Users</p></div></div>
-              <div className="stat-card"><div className="stat-icon" style={{ background: 'rgba(139,92,246,0.15)' }}><i className="fas fa-wrench"></i></div><div className="stat-info"><h3>{stats.helpers}</h3><p>Registered Helpers</p></div></div>
+              <div className="stat-card"><div className="stat-icon" style={{ background: 'var(--info-bg)' }}><i className="fas fa-users"></i></div><div className="stat-info"><h3>{stats.userBreakdown?.households || 0}</h3><p>Household Members</p></div></div>
+              <div className="stat-card"><div className="stat-icon" style={{ background: 'rgba(139,92,246,0.15)' }}><i className="fas fa-wrench"></i></div><div className="stat-info"><h3>{stats.userBreakdown?.helpers || 0}</h3><p>Helpers</p></div></div>
               <div className="stat-card"><div className="stat-icon" style={{ background: 'var(--success-bg)' }}><i className="fas fa-clipboard-list"></i></div><div className="stat-info"><h3>{stats.bookings.total}</h3><p>Total Bookings</p></div></div>
               <div className="stat-card"><div className="stat-icon" style={{ background: 'var(--warning-bg)' }}><i className="fas fa-money-bill-wave"></i></div><div className="stat-info"><h3>৳{stats.revenue}</h3><p>Total Revenue</p></div></div>
             </div>
 
             <div className="grid grid-3" style={{ marginBottom: 32 }}>
+              <div className="glass-card-static">
+                <h3 style={{ marginBottom: 16 }}><i className="fas fa-users"></i> User Breakdown</h3>
+                <div className="admin-metric"><span>All Accounts</span><span className="badge badge-info">{stats.userBreakdown?.total || 0}</span></div>
+                <div className="admin-metric"><span>Active Users</span><span className="badge badge-success">{stats.userBreakdown?.active || 0}</span></div>
+                <div className="admin-metric"><span>Banned Users</span><span className="badge badge-danger">{stats.userBreakdown?.banned || 0}</span></div>
+                <div className="admin-metric"><span>Household Members</span><span>{stats.userBreakdown?.households || 0}</span></div>
+                <div className="admin-metric"><span>Helpers</span><span>{stats.userBreakdown?.helpers || 0}</span></div>
+                <div className="admin-metric"><span>Admins</span><span>{stats.userBreakdown?.admins || 0}</span></div>
+              </div>
               <div className="glass-card-static">
                 <h3 style={{ marginBottom: 16 }}><i className="fas fa-chart-bar"></i> Bookings Breakdown</h3>
                 <div className="admin-metric"><span>Pending</span><span className="badge badge-warning">{stats.bookings.pending}</span></div>
@@ -95,6 +141,24 @@ export default function AdminDashboard() {
                 <h3 style={{ marginBottom: 16 }}><i className="fas fa-bullhorn"></i> Jobs</h3>
                 <div className="admin-metric"><span>Open Jobs</span><span className="badge badge-success">{stats.jobs.open}</span></div>
                 <div className="admin-metric"><span>Total Jobs</span><span className="badge badge-info">{stats.jobs.total}</span></div>
+              </div>
+            </div>
+
+            <div className="grid grid-3" style={{ marginBottom: 32 }}>
+              <div className="glass-card-static">
+                <h3 style={{ marginBottom: 16 }}><i className="fas fa-home"></i> Households</h3>
+                <div className="admin-metric"><span>Active</span><span className="badge badge-success">{stats.userBreakdown?.active_households || 0}</span></div>
+                <div className="admin-metric"><span>Banned</span><span className="badge badge-danger">{stats.userBreakdown?.banned_households || 0}</span></div>
+              </div>
+              <div className="glass-card-static">
+                <h3 style={{ marginBottom: 16 }}><i className="fas fa-wrench"></i> Helpers</h3>
+                <div className="admin-metric"><span>Active</span><span className="badge badge-success">{stats.userBreakdown?.active_helpers || 0}</span></div>
+                <div className="admin-metric"><span>Banned</span><span className="badge badge-danger">{stats.userBreakdown?.banned_helpers || 0}</span></div>
+              </div>
+              <div className="glass-card-static">
+                <h3 style={{ marginBottom: 16 }}><i className="fas fa-user-shield"></i> Admins</h3>
+                <div className="admin-metric"><span>Active</span><span className="badge badge-success">{stats.userBreakdown?.active_admins || 0}</span></div>
+                <div className="admin-metric"><span>Banned</span><span className="badge badge-danger">{stats.userBreakdown?.banned_admins || 0}</span></div>
               </div>
             </div>
           </div>
