@@ -5,6 +5,10 @@ const ensureSchema = require('./db/ensureSchema');
 require('dotenv').config();
 
 const app = express();
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 ensureSchema().catch((error) => {
   console.error('Schema migration failed:', error);
@@ -12,7 +16,12 @@ ensureSchema().catch((error) => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
 }));
 app.use(express.json());

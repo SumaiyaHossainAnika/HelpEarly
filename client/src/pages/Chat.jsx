@@ -5,6 +5,11 @@ import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const rawSocketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || '';
+const SOCKET_URL = rawSocketUrl
+  ? rawSocketUrl.replace(/\/api\/?$/, '').replace(/\/$/, '')
+  : undefined;
+
 export default function Chat() {
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
@@ -21,7 +26,7 @@ export default function Chat() {
   // Initialize socket
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const s = io({ auth: { token } });
+    const s = io(SOCKET_URL, { auth: { token }, withCredentials: true });
     setSocket(s);
 
     s.on('new_message', (msg) => {

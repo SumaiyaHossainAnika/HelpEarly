@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: at-your-service-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
