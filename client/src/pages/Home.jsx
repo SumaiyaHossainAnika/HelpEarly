@@ -30,7 +30,7 @@ export default function Home() {
               Connect with local helpers for cleaning, plumbing, electrical, babysitting and more.
               Book instantly and get help when you need it.
             </p>
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+            <div className="hero-actions">
               <Link to="/helpers" className="btn btn-primary btn-lg">Browse Helpers</Link>
               <Link to="/register" className="btn btn-secondary btn-lg">Join as Helper</Link>
             </div>

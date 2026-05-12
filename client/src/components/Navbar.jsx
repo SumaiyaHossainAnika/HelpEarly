@@ -95,6 +95,17 @@ export default function Navbar() {
               Profile
             </Link>
           )}
+
+          {user ? (
+            <button className="nav-link mobile-menu-action" onClick={handleLogout} type="button">
+              Logout
+            </button>
+          ) : (
+            <div className="mobile-menu-auth">
+              <Link to="/login" className="nav-link" onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="nav-link nav-link-primary" onClick={() => setMenuOpen(false)}>Sign Up</Link>
+            </div>
+          )}
         </div>
 
         <div className="navbar-actions">
