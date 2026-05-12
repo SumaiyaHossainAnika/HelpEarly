@@ -75,20 +75,6 @@ export default function Login() {
               Don't have an account? <Link to="/register">Create one</Link>
             </p>
 
-            <div className="demo-accounts">
-              <p className="demo-title">Demo Accounts (password: test123)</p>
-              <div className="demo-list">
-                <button className="demo-btn" onClick={() => { setEmail('fatima@example.com'); setPassword('test123'); }}>
-                  <i className="fas fa-user"></i> Household
-                </button>
-                <button className="demo-btn" onClick={() => { setEmail('rahim@example.com'); setPassword('test123'); }}>
-                  <i className="fas fa-wrench"></i> Helper
-                </button>
-                <button className="demo-btn" onClick={() => { setEmail('admin@helpearly.com'); setPassword('admin123'); }}>
-                  <i className="fas fa-shield-alt"></i> Admin
-                </button>
-              </div>
-            </div>
           </div>
         </div>
       </div>
