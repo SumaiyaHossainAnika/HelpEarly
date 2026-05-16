@@ -72,7 +72,7 @@ exports.getJobs = async (req, res) => {
     }
 
     let query = `
-      SELECT j.*, u.name as poster_name, u.avatar_url as poster_avatar, c.name as category_name, c.icon as category_icon,
+      SELECT j.*, u.id as poster_id, u.name as poster_name, u.avatar_url as poster_avatar, c.name as category_name, c.icon as category_icon,
              (SELECT COUNT(*) FROM job_applications WHERE job_id = j.id) as application_count
       FROM jobs j
       JOIN users u ON j.user_id = u.id
@@ -117,7 +117,7 @@ exports.getJobsForHelper = async (req, res) => {
     }
 
     const result = await pool.query(`
-      SELECT j.*, u.name as poster_name, c.name as category_name, c.icon as category_icon,
+      SELECT j.*, u.id as poster_id, u.name as poster_name, c.name as category_name, c.icon as category_icon,
              (SELECT COUNT(*) FROM job_applications WHERE job_id = j.id) as application_count
       FROM jobs j
       JOIN users u ON j.user_id = u.id
@@ -138,7 +138,7 @@ exports.getJob = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await pool.query(`
-      SELECT j.*, u.name as poster_name, u.avatar_url as poster_avatar, u.phone as poster_phone,
+      SELECT j.*, u.id as poster_id, u.name as poster_name, u.avatar_url as poster_avatar, u.phone as poster_phone,
              c.name as category_name, c.icon as category_icon
       FROM jobs j
       JOIN users u ON j.user_id = u.id
@@ -182,7 +182,7 @@ exports.getJob = async (req, res) => {
     let applications = [];
     if (req.user?.id === job.user_id) {
       const apps = await pool.query(`
-        SELECT ja.*, u.name as helper_name, u.avatar_url as helper_avatar, h.avg_rating, h.total_reviews
+        SELECT ja.*, u.id as helper_user_id, u.name as helper_name, u.avatar_url as helper_avatar, h.avg_rating, h.total_reviews
         FROM job_applications ja
         JOIN helpers h ON ja.helper_id = h.id
         JOIN users u ON h.user_id = u.id
@@ -217,7 +217,7 @@ exports.getMyJobs = async (req, res) => {
     }
 
     const result = await pool.query(`
-      SELECT j.*, u.name as poster_name, c.name as category_name, c.icon as category_icon,
+      SELECT j.*, u.id as poster_id, u.name as poster_name, c.name as category_name, c.icon as category_icon,
              (SELECT COUNT(*) FROM job_applications WHERE job_id = j.id) as application_count
       FROM jobs j
       JOIN users u ON j.user_id = u.id
@@ -333,7 +333,7 @@ exports.getMyApplications = async (req, res) => {
 
     const result = await pool.query(`
       SELECT ja.*, j.title, j.description, j.budget, j.location, j.preferred_date, j.status as job_status,
-             c.name as category_name, c.icon as category_icon, u.name as poster_name
+             c.name as category_name, c.icon as category_icon, u.id as poster_id, u.name as poster_name
       FROM job_applications ja
       JOIN jobs j ON ja.job_id = j.id
       JOIN users u ON j.user_id = u.id

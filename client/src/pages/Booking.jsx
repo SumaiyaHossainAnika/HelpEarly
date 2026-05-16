@@ -4,6 +4,7 @@ import { helpersAPI, bookingsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import AddressMap, { addressPlaceholder } from '../components/AddressMap';
+import ProfileLink from '../components/ProfileLink';
 
 export default function Booking() {
   const { helperId } = useParams();
@@ -69,7 +70,9 @@ export default function Booking() {
             <span style={{ fontSize: '4rem', display: 'block', marginBottom: 16, color: 'var(--success)' }}><i className="fas fa-check-circle"></i></span>
             <h2>Booking Submitted!</h2>
             <p style={{ color: 'var(--text-secondary)', margin: '12px 0 24px' }}>
-              Your booking request has been sent to {helper.name}. You'll be notified when they confirm.
+              Your booking request has been sent to{' '}
+              <ProfileLink userId={helper.user_id} helperId={helper.id} role="helper" name={helper.name} />.
+              You'll be notified when they confirm.
             </p>
             <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
               <button className="btn btn-primary" onClick={() => navigate('/dashboard')}>My Bookings</button>
@@ -88,7 +91,10 @@ export default function Booking() {
           {/* Booking Form */}
           <div className="booking-form-card glass-card-static">
             <h1><i className="fas fa-calendar-plus"></i> Book a Service</h1>
-            <p className="text-secondary">Fill in the details to book {helper.name}</p>
+            <p className="text-secondary">
+              Fill in the details to book{' '}
+              <ProfileLink userId={helper.user_id} helperId={helper.id} role="helper" name={helper.name} />
+            </p>
 
             {error && <div className="alert alert-error">{error}</div>}
 
@@ -144,7 +150,9 @@ export default function Booking() {
             <div className="summary-helper">
               <div className="avatar avatar-lg avatar-placeholder">{helper.name?.charAt(0)}</div>
               <div>
-                <p className="summary-name">{helper.name}</p>
+                <p className="summary-name">
+                  <ProfileLink userId={helper.user_id} helperId={helper.id} role="helper" name={helper.name} />
+                </p>
                 <p className="text-secondary"><i className="fas fa-map-marker-alt"></i> {helper.location}</p>
               </div>
             </div>

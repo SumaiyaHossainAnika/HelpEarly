@@ -4,6 +4,7 @@ import { messagesAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { io } from 'socket.io-client';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ProfileLink from '../components/ProfileLink';
 
 const rawSocketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || '';
 const SOCKET_URL = rawSocketUrl
@@ -132,7 +133,14 @@ export default function Chat() {
                     </div>
                     <div className="conv-info">
                       <div className="conv-header-row">
-                        <span className="conv-name">{conv.other_name}</span>
+                        <ProfileLink
+                          userId={conv.other_id}
+                          helperId={conv.other_helper_profile_id}
+                          role={conv.other_role}
+                          name={conv.other_name}
+                          className="conv-name profile-link"
+                          onClick={(e) => e.stopPropagation()}
+                        />
                         {conv.is_other_active === false && <span className="badge badge-danger">Unavailable</span>}
                         {conv.unread_count > 0 && (
                           <span className="unread-badge">{conv.unread_count}</span>
@@ -154,7 +162,14 @@ export default function Chat() {
                   <div className="avatar avatar-placeholder" style={{ width: 40, height: 40 }}>
                     {(activeConv.other_name || activeConv.other_user?.name || '?').charAt(0).toUpperCase()}
                   </div>
-                  <h3>{activeConv.other_name || activeConv.other_user?.name}</h3>
+                  <h3>
+                    <ProfileLink
+                      userId={activeConv.other_id || activeConv.other_user?.id}
+                      helperId={activeConv.other_helper_profile_id || activeConv.other_user?.helper_profile_id}
+                      role={activeConv.other_role || activeConv.other_user?.role}
+                      name={activeConv.other_name || activeConv.other_user?.name}
+                    />
+                  </h3>
                   {activeConv.is_other_active === false && <span className="badge badge-danger">Unavailable</span>}
                 </div>
 

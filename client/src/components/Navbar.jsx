@@ -121,7 +121,9 @@ export default function Navbar() {
 
           {user ? (
             <div className="navbar-user">
-              <span className="navbar-user-name">{user.name?.split(' ')[0]}</span>
+              <Link to="/profile" className="navbar-user-name profile-link" onClick={() => setMenuOpen(false)}>
+                {user.name?.split(' ')[0]}
+              </Link>
               <button className="btn btn-sm btn-secondary" onClick={handleLogout} id="logout-btn">
                 Logout
               </button>

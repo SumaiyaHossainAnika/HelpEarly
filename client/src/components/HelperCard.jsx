@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
+import ProfileLink from './ProfileLink';
 import { getCategoryIcon } from '../utils/iconMap';
 
 export default function HelperCard({ helper }) {
@@ -30,7 +31,9 @@ export default function HelperCard({ helper }) {
           {helper.is_verified && <span className="verified-badge" title="Verified"><i className="fas fa-check"></i></span>}
         </div>
         <div className="helper-info">
-          <h3 className="helper-name">{name}</h3>
+          <h3 className="helper-name">
+            <ProfileLink helperId={helper.id} role="helper" name={name} />
+          </h3>
           <p className="helper-location"><i className="fas fa-map-marker-alt"></i> {helper.location || 'Location not set'}</p>
           <div className="helper-rating">
             <StarRating rating={helper.avg_rating || 0} />

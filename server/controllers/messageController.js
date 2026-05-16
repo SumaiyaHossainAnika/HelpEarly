@@ -13,6 +13,8 @@ exports.getConversations = async (req, res) => {
         END as other_name,
         CASE WHEN c.user1_id = $1 THEN u2.avatar_url ELSE u1.avatar_url END as other_avatar,
         CASE WHEN c.user1_id = $1 THEN u2.id ELSE u1.id END as other_id,
+        CASE WHEN c.user1_id = $1 THEN u2.role ELSE u1.role END as other_role,
+        CASE WHEN c.user1_id = $1 THEN h2.id ELSE h1.id END as other_helper_profile_id,
         CASE WHEN c.user1_id = $1 THEN u2.is_active ELSE u1.is_active END as is_other_active,
         m.content as last_message,
         m.sender_id as last_sender_id,
@@ -20,6 +22,8 @@ exports.getConversations = async (req, res) => {
       FROM conversations c
       JOIN users u1 ON c.user1_id = u1.id
       JOIN users u2 ON c.user2_id = u2.id
+      LEFT JOIN helpers h1 ON h1.user_id = u1.id
+      LEFT JOIN helpers h2 ON h2.user_id = u2.id
       LEFT JOIN messages m ON m.id = (
         SELECT id FROM messages WHERE conversation_id = c.id ORDER BY created_at DESC LIMIT 1
       )
@@ -138,7 +142,10 @@ exports.getOrCreateConversation = async (req, res) => {
     const { userId } = req.params;
 
     const otherUser = await pool.query(
-      'SELECT id, name, avatar_url, is_active FROM users WHERE id = $1',
+      `SELECT u.id, u.name, u.avatar_url, u.role, u.is_active, h.id as helper_profile_id
+       FROM users u
+       LEFT JOIN helpers h ON h.user_id = u.id
+       WHERE u.id = $1`,
       [userId]
     );
 
@@ -166,6 +173,8 @@ exports.getOrCreateConversation = async (req, res) => {
     res.json({
       ...conv.rows[0],
       other_id: otherUser.rows[0].id,
+      other_role: otherUser.rows[0].role,
+      other_helper_profile_id: otherUser.rows[0].helper_profile_id,
       other_name: otherUser.rows[0].is_active ? otherUser.rows[0].name : 'Unavailable',
       is_other_active: otherUser.rows[0].is_active,
       other_user: {

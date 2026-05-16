@@ -6,6 +6,7 @@ import StarRating from '../components/StarRating';
 import LoadingSpinner from '../components/LoadingSpinner';
 import AddressMap from '../components/AddressMap';
 import ComplaintPanel from '../components/ComplaintPanel';
+import ProfileLink from '../components/ProfileLink';
 
 export default function UserDashboard() {
   const { user } = useAuth();
@@ -86,7 +87,15 @@ export default function UserDashboard() {
                   <div className="booking-item-header">
                     <div className="booking-item-info">
                       <h3>{booking.service_name || 'General Service'} {booking.category_icon}</h3>
-                      <p className="text-secondary">Helper: <Link to={`/helpers/${booking.helper_profile_id || booking.helper_id}`}>{booking.helper_name}</Link></p>
+                      <p className="text-secondary">
+                        Helper:{' '}
+                        <ProfileLink
+                          userId={booking.helper_user_id}
+                          helperId={booking.helper_profile_id || booking.helper_id}
+                          role="helper"
+                          name={booking.helper_name}
+                        />
+                      </p>
                     </div>
                     {statusBadge(booking.status)}
                   </div>

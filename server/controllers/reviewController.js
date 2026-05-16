@@ -59,7 +59,7 @@ exports.getHelperReviews = async (req, res) => {
     const offset = (page - 1) * limit;
 
     const result = await pool.query(`
-      SELECT r.*, u.name as reviewer_name, u.avatar_url as reviewer_avatar
+      SELECT r.*, u.id as reviewer_id, u.name as reviewer_name, u.avatar_url as reviewer_avatar
       FROM reviews r
       JOIN users u ON r.user_id = u.id
       WHERE r.helper_id = $1

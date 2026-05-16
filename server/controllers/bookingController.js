@@ -39,7 +39,7 @@ exports.getBookings = async (req, res) => {
 
     if (req.user.role === 'helper') {
       query = `
-        SELECT b.*, u.name as client_name, u.avatar_url as client_avatar, u.phone as client_phone,
+        SELECT b.*, u.id as client_id, u.name as client_name, u.avatar_url as client_avatar, u.phone as client_phone,
                hs.service_name, c.name as category_name, c.icon as category_icon
         FROM bookings b
         JOIN users u ON b.user_id = u.id
@@ -51,7 +51,7 @@ exports.getBookings = async (req, res) => {
       params = [req.user.id];
     } else {
       query = `
-        SELECT b.*, u.name as helper_name, u.avatar_url as helper_avatar, u.phone as helper_phone,
+        SELECT b.*, u.id as helper_user_id, u.name as helper_name, u.avatar_url as helper_avatar, u.phone as helper_phone,
                hs.service_name, c.name as category_name, c.icon as category_icon, h.id as helper_profile_id
         FROM bookings b
         JOIN helpers h ON b.helper_id = h.id

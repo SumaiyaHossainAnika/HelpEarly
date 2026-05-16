@@ -44,7 +44,8 @@ exports.getStats = async (req, res) => {
 
     // Recent activity
     const recentBookings = await pool.query(`
-      SELECT b.*, u.name as client_name, hu.name as helper_name
+      SELECT b.*, u.id as client_id, u.name as client_name,
+             h.id as helper_profile_id, hu.id as helper_user_id, hu.name as helper_name
       FROM bookings b
       JOIN users u ON b.user_id = u.id
       JOIN helpers h ON b.helper_id = h.id
@@ -85,19 +86,24 @@ exports.getUsers = async (req, res) => {
     const { role, search, page = 1, limit = 20 } = req.query;
     const offset = (page - 1) * limit;
 
-    let query = `SELECT id, name, email, phone, role, location, avatar_url, is_active, created_at FROM users WHERE 1=1`;
+    let query = `
+      SELECT u.id, u.name, u.email, u.phone, u.role, u.location, u.avatar_url, u.is_active,
+             u.created_at, h.id as helper_profile_id
+      FROM users u
+      LEFT JOIN helpers h ON h.user_id = u.id
+      WHERE 1=1`;
     const params = [];
 
     if (role) {
       params.push(role);
-      query += ` AND role = $${params.length}`;
+      query += ` AND u.role = $${params.length}`;
     }
     if (search) {
       params.push(`%${search}%`);
-      query += ` AND (name ILIKE $${params.length} OR email ILIKE $${params.length})`;
+      query += ` AND (u.name ILIKE $${params.length} OR u.email ILIKE $${params.length})`;
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    query += ` ORDER BY u.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(parseInt(limit), parseInt(offset));
 
     const result = await pool.query(query, params);

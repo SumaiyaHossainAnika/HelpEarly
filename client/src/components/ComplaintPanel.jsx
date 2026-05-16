@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { complaintsAPI } from '../utils/api';
+import ProfileLink from './ProfileLink';
 
 export default function ComplaintPanel() {
   const [contacts, setContacts] = useState([]);
@@ -116,7 +117,15 @@ export default function ComplaintPanel() {
                     {complaint.status}
                   </span>
                 </div>
-                <p className="text-secondary">Against {complaint.accused_name}</p>
+                <p className="text-secondary">
+                  Against{' '}
+                  <ProfileLink
+                    userId={complaint.accused_id}
+                    helperId={complaint.accused_helper_profile_id}
+                    role={complaint.accused_role}
+                    name={complaint.accused_name}
+                  />
+                </p>
                 <p>{complaint.description}</p>
               </div>
             ))}

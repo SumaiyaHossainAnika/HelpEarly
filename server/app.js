@@ -39,6 +39,7 @@ app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/jobs', require('./routes/jobs'));
 app.use('/api/complaints', require('./routes/complaints'));
+app.use('/api/users', require('./routes/users'));
 app.use('/api/admin', require('./routes/admin'));
 
 // Health check

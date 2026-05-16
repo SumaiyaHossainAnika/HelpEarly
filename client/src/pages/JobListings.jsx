@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getCategoryIcon, HIDDEN_CATEGORIES } from '../utils/iconMap';
 import AddressMap from '../components/AddressMap';
+import ProfileLink from '../components/ProfileLink';
 
 export default function JobListings() {
   const { user, loading: authLoading } = useAuth();
@@ -121,7 +122,8 @@ export default function JobListings() {
                   <div className="booking-item-info">
                     <h3>{job.title}</h3>
                     <p className="text-secondary">
-                      <i className={getCategoryIcon(job.category_name)}></i> {job.category_name} · Posted by {job.poster_name}
+                      <i className={getCategoryIcon(job.category_name)}></i> {job.category_name} · Posted by{' '}
+                      <ProfileLink userId={job.poster_id || job.user_id} role="household" name={job.poster_name} />
                       · {new Date(job.created_at).toLocaleDateString()}
                     </p>
                   </div>

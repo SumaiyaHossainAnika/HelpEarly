@@ -17,6 +17,7 @@ import JobListings from './pages/JobListings';
 import JobDetail from './pages/JobDetail';
 import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
+import UserProfile from './pages/UserProfile';
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/helpers" element={<BrowseHelpers />} />
         <Route path="/helpers/:id" element={<HelperProfile />} />
+        <Route path="/users/:id" element={<UserProfile />} />
         <Route path="/jobs" element={<JobListings />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
         <Route path="/book/:helperId" element={

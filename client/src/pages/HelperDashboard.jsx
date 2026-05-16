@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { getCategoryIcon, HIDDEN_CATEGORIES } from '../utils/iconMap';
 import AddressMap from '../components/AddressMap';
 import ComplaintPanel from '../components/ComplaintPanel';
+import ProfileLink from '../components/ProfileLink';
 
 export default function HelperDashboard() {
   const { user } = useAuth();
@@ -112,7 +113,10 @@ export default function HelperDashboard() {
                   <div className="booking-item-header">
                     <div className="booking-item-info">
                       <h3>{b.service_name || 'General Service'}</h3>
-                      <p className="text-secondary">Client: {b.client_name}</p>
+                      <p className="text-secondary">
+                        Client:{' '}
+                        <ProfileLink userId={b.client_id || b.user_id} role="household" name={b.client_name} />
+                      </p>
                     </div>
                     {statusBadge(b.status)}
                   </div>
@@ -204,7 +208,13 @@ export default function HelperDashboard() {
               applications.map(a => (
                 <div key={a.id} className="booking-item glass-card">
                   <div className="booking-item-header">
-                    <div className="booking-item-info"><h3>{a.title}</h3><p className="text-secondary"><i className={getCategoryIcon(a.category_name)}></i> {a.category_name} · Posted by {a.poster_name}</p></div>
+                    <div className="booking-item-info">
+                      <h3>{a.title}</h3>
+                      <p className="text-secondary">
+                        <i className={getCategoryIcon(a.category_name)}></i> {a.category_name} · Posted by{' '}
+                        <ProfileLink userId={a.poster_id || a.user_id} role="household" name={a.poster_name} />
+                      </p>
+                    </div>
                     {statusBadge(a.status)}
                   </div>
                   <div className="booking-item-details">

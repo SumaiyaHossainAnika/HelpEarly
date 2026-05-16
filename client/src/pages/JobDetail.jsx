@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { getCategoryIcon } from '../utils/iconMap';
 import AddressMap from '../components/AddressMap';
+import ProfileLink from '../components/ProfileLink';
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -60,7 +61,11 @@ export default function JobDetail() {
             <div>
               <span className="badge badge-primary" style={{ marginBottom: 8 }}><i className={getCategoryIcon(job.category_name)}></i> {job.category_name}</span>
               <h1 style={{ fontSize: '1.8rem' }}>{job.title}</h1>
-              <p className="text-secondary">Posted by {job.poster_name} · {new Date(job.created_at).toLocaleDateString()}</p>
+              <p className="text-secondary">
+                Posted by{' '}
+                <ProfileLink userId={job.poster_id || job.user_id} role="household" name={job.poster_name} />
+                {' '}· {new Date(job.created_at).toLocaleDateString()}
+              </p>
             </div>
             <span className={`badge ${job.status === 'open' ? 'badge-success' : 'badge-warning'}`}>{job.status}</span>
           </div>
@@ -116,7 +121,14 @@ export default function JobDetail() {
                 <div key={app.id} className="booking-item glass-card">
                   <div className="booking-item-header">
                     <div className="booking-item-info">
-                      <h3>{app.helper_name}</h3>
+                      <h3>
+                        <ProfileLink
+                          userId={app.helper_user_id}
+                          helperId={app.helper_id}
+                          role="helper"
+                          name={app.helper_name}
+                        />
+                      </h3>
                       <p className="text-secondary"><i className="fas fa-star" style={{ color: '#f59e0b' }}></i> {Number(app.avg_rating || 0).toFixed(1)} · {app.total_reviews || 0} reviews</p>
                     </div>
                     <span className={`badge ${app.status === 'accepted' ? 'badge-success' : app.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>{app.status}</span>

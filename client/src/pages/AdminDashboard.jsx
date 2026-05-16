@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { adminAPI, complaintsAPI } from '../utils/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import ProfileLink from '../components/ProfileLink';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -199,7 +200,12 @@ export default function AdminDashboard() {
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div className="avatar avatar-placeholder" style={{ width: 32, height: 32, fontSize: '0.75rem' }}>{u.name?.charAt(0)}</div>
-                          {u.name}
+                          <ProfileLink
+                            userId={u.id}
+                            helperId={u.helper_profile_id}
+                            role={u.role}
+                            name={u.name}
+                          />
                         </div>
                       </td>
                       <td>{u.email}</td>
@@ -236,7 +242,20 @@ export default function AdminDashboard() {
                       <div className="booking-item-info">
                         <h3>{complaint.subject}</h3>
                         <p className="text-secondary">
-                          {complaint.complainant_name} ({complaint.complainant_role}) against {complaint.accused_name} ({complaint.accused_role})
+                          <ProfileLink
+                            userId={complaint.complainant_id}
+                            helperId={complaint.complainant_helper_profile_id}
+                            role={complaint.complainant_role}
+                            name={complaint.complainant_name}
+                          />{' '}
+                          ({complaint.complainant_role}) against{' '}
+                          <ProfileLink
+                            userId={complaint.accused_id}
+                            helperId={complaint.accused_helper_profile_id}
+                            role={complaint.accused_role}
+                            name={complaint.accused_name}
+                          />{' '}
+                          ({complaint.accused_role})
                         </p>
                       </div>
                       <span className={`badge ${complaint.status === 'resolved' ? 'badge-success' : complaint.status === 'dismissed' ? 'badge-danger' : 'badge-warning'}`}>
@@ -268,8 +287,8 @@ export default function AdminDashboard() {
                 <tbody>
                   {(stats.recentBookings || []).map((b) => (
                     <tr key={b.id}>
-                      <td>{b.client_name}</td>
-                      <td>{b.helper_name}</td>
+                      <td><ProfileLink userId={b.client_id || b.user_id} role="household" name={b.client_name} /></td>
+                      <td><ProfileLink userId={b.helper_user_id} helperId={b.helper_profile_id || b.helper_id} role="helper" name={b.helper_name} /></td>
                       <td><span className={`badge ${b.status === 'completed' ? 'badge-success' : b.status === 'pending' ? 'badge-warning' : 'badge-info'}`}>{b.status}</span></td>
                       <td>{new Date(b.created_at).toLocaleDateString()}</td>
                     </tr>

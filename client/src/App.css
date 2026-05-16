@@ -479,6 +479,15 @@
 
 .helper-info { flex: 1; min-width: 0; }
 .helper-name { font-size: 1rem; font-weight: 600; margin-bottom: 2px; }
+.profile-link {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+.profile-link:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
 .helper-location { color: var(--text-secondary); font-size: 0.82rem; margin-bottom: 4px; }
 .helper-rating { display: flex; align-items: center; gap: 6px; }
 .rating-text { font-size: 0.82rem; color: var(--text-secondary); }

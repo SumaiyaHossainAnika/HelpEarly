@@ -1,4 +1,5 @@
 import StarRating from './StarRating';
+import ProfileLink from './ProfileLink';
 
 export default function ReviewCard({ review }) {
   const initial = review.reviewer_name?.charAt(0).toUpperCase() || '?';
@@ -14,7 +15,9 @@ export default function ReviewCard({ review }) {
           )}
         </div>
         <div className="review-meta">
-          <p className="reviewer-name">{review.reviewer_name || 'Anonymous'}</p>
+          <p className="reviewer-name">
+            <ProfileLink userId={review.reviewer_id || review.user_id} name={review.reviewer_name || 'Anonymous'} />
+          </p>
           <StarRating rating={review.rating} size="sm" />
         </div>
         <span className="review-date">

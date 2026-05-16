@@ -82,9 +82,11 @@ exports.createComplaint = async (req, res) => {
 exports.getMyComplaints = async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT c.*, au.name as accused_name, au.role as accused_role
+      SELECT c.*, au.name as accused_name, au.role as accused_role,
+             ah.id as accused_helper_profile_id
       FROM complaints c
       JOIN users au ON c.accused_id = au.id
+      LEFT JOIN helpers ah ON ah.user_id = au.id
       WHERE c.complainant_id = $1
       ORDER BY c.created_at DESC
     `, [req.user.id]);
@@ -109,10 +111,14 @@ exports.getAllComplaints = async (req, res) => {
 
     const result = await pool.query(`
       SELECT c.*, cu.name as complainant_name, cu.role as complainant_role,
-             au.name as accused_name, au.role as accused_role
+             ch.id as complainant_helper_profile_id,
+             au.name as accused_name, au.role as accused_role,
+             ah.id as accused_helper_profile_id
       FROM complaints c
       JOIN users cu ON c.complainant_id = cu.id
       JOIN users au ON c.accused_id = au.id
+      LEFT JOIN helpers ch ON ch.user_id = cu.id
+      LEFT JOIN helpers ah ON ah.user_id = au.id
       ${where}
       ORDER BY c.created_at DESC
     `, params);

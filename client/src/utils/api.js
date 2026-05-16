@@ -91,6 +91,11 @@ export const messagesAPI = {
   getOrCreateConversation: (userId) => request(`/messages/conversation/${userId}`),
 };
 
+// Users
+export const usersAPI = {
+  getOne: (id) => request(`/users/${id}`),
+};
+
 // Complaints
 export const complaintsAPI = {
   getContacts: () => request('/complaints/contacts'),
