@@ -682,12 +682,30 @@
   margin-bottom: 10px;
 }
 
-.address-preview iframe {
+.address-preview iframe,
+.address-map-canvas {
   width: 100%;
   height: 180px;
   border: 0;
   border-radius: var(--radius-sm);
   background: var(--bg-tertiary);
+}
+
+.address-map-canvas {
+  cursor: grab;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.address-map-canvas:active {
+  cursor: grabbing;
+}
+
+.address-map-status {
+  display: block;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
 }
 
 /* ---- Booking Item (Dashboard) ---- */
@@ -1236,7 +1254,8 @@
     gap: 4px;
   }
 
-  .address-preview iframe {
+  .address-preview iframe,
+  .address-map-canvas {
     height: 210px;
   }
 
