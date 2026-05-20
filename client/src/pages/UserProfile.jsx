@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { usersAPI } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import AddressMap from '../components/AddressMap';
 import StarRating from '../components/StarRating';
 
 export default function UserProfile() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -37,6 +40,14 @@ export default function UserProfile() {
   }
 
   const initial = profile.name?.charAt(0).toUpperCase() || '?';
+  const canHelperChat = user?.role === 'helper'
+    && profile.role === 'household'
+    && Number(user.id) !== Number(profile.id);
+
+  const handleChat = () => {
+    if (!user) return navigate('/login');
+    navigate(`/chat?userId=${profile.id}`);
+  };
 
   return (
     <div className="page">
@@ -68,6 +79,13 @@ export default function UserProfile() {
                   <StarRating rating={profile.avg_rating || 0} />
                   <span className="rating-value">{Number(profile.avg_rating || 0).toFixed(1)}</span>
                   <span className="review-count">({profile.total_reviews || 0} reviews)</span>
+                </div>
+              )}
+              {canHelperChat && (
+                <div className="profile-actions" style={{ marginTop: 16 }}>
+                  <button className="btn btn-secondary" onClick={handleChat} id="household-chat-btn">
+                    <i className="fas fa-comments"></i> Chat with Household
+                  </button>
                 </div>
               )}
             </div>
