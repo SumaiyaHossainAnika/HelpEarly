@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProtectedRoute from './components/ProtectedRoute';
+import SplashScreen from './components/SplashScreen';
 
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -22,6 +23,7 @@ import UserProfile from './pages/UserProfile';
 export default function App() {
   return (
     <>
+      <SplashScreen />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />

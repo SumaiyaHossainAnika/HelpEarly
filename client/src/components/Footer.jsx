@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <span className="brand-icon"><i className="fas fa-home" style={{ color: 'var(--accent)' }}></i></span>
+            <img src="/logo.svg" alt="At Your Service" className="footer-logo" />
             <span className="brand-text">At Your Service</span>
             <p className="footer-desc">Connecting households with trusted local helpers for all your home service needs.</p>
           </div>

@@ -32,7 +32,8 @@ export default function Navbar() {
     <nav className="navbar" id="main-navbar">
       <div className="container navbar-inner">
         <Link to="/" className="navbar-brand" onClick={() => setMenuOpen(false)}>
-          <i className="fas fa-home"></i> <span className="brand-text">At Your Service</span>
+          <img src="/logo.svg" alt="At Your Service" className="brand-logo" />
+          <span className="brand-text">At Your Service</span>
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">At Your Service logo</title>
+  <desc id="desc">A neon house held by a hand with a check mark, based on the requested logo reference.</desc>
+  <defs>
+    <linearGradient id="houseStroke" x1="102" y1="130" x2="410" y2="360" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2447ff"/>
+      <stop offset="52%" stop-color="#7138ff"/>
+      <stop offset="100%" stop-color="#b23cff"/>
+    </linearGradient>
+    <linearGradient id="handStroke" x1="100" y1="320" x2="414" y2="390" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3345ff"/>
+      <stop offset="55%" stop-color="#7c37ff"/>
+      <stop offset="100%" stop-color="#a93cff"/>
+    </linearGradient>
+    <linearGradient id="checkStroke" x1="235" y1="286" x2="330" y2="245" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#14c8ff"/>
+      <stop offset="100%" stop-color="#19f2df"/>
+    </linearGradient>
+    <filter id="purpleGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="22" result="blur"/>
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="0 0 0 0 0.38  0 0 0 0 0.12  0 0 0 0 1  0 0 0 .95 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="cyanGlow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="14" result="blur"/>
+      <feColorMatrix
+        in="blur"
+        type="matrix"
+        values="0 0 0 0 0.02  0 0 0 0 0.9  0 0 0 0 1  0 0 0 .9 0"
+        result="glow"
+      />
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#purpleGlow)">
+    <path
+      d="M118 232 240 132c10-8 25-8 35 0l121 100"
+      stroke="url(#houseStroke)"
+      stroke-width="30"
+    />
+    <path
+      d="M144 241v116M368 241v94M176 337V232l80-66 80 66v98"
+      stroke="url(#houseStroke)"
+      stroke-width="22"
+    />
+    <path
+      d="M365 184h36v69l19 17"
+      stroke="url(#houseStroke)"
+      stroke-width="24"
+    />
+    <path
+      d="M225 225h28v28h-28zM271 225h28v28h-28zM225 271h28v28h-28zM271 271h28v28h-28z"
+      stroke="#162052"
+      stroke-width="8"
+      filter="none"
+    />
+    <path
+      d="M117 356c21-34 58-50 103-36l76 26c18 6 27 23 21 38-6 15-24 22-42 16l-54-17"
+      stroke="url(#handStroke)"
+      stroke-width="28"
+    />
+    <path
+      d="M221 383 285 403c28 9 55 3 76-17l60-56c12-11 30-10 40 1 10 12 9 29-3 40l-61 58c-44 41-94 57-155 43-56-12-103-39-125-76"
+      stroke="url(#handStroke)"
+      stroke-width="28"
+    />
+  </g>
+
+  <path
+    d="M246 299 282 335 337 269"
+    fill="none"
+    stroke="url(#checkStroke)"
+    stroke-width="28"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    filter="url(#cyanGlow)"
+  />
+</svg>
